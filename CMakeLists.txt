@@ -1,22 +1,42 @@
-cmake_minimum_required(VERSION 3.6)
-project(SM)
+cmake_minimum_required(VERSION 3.8)
+project(MC-Heston)
 
-SET(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
-SET(SOURCE_FILES
-        main.cpp
-        basic.cpp
-        analytic.cpp
-        heston.cpp
-        plot.cpp
-        print.cpp)
+set(CMAKE_BUILD_TYPE release)
 
-SET(LIBRARIES
-        libboost_system.dylib
-        libboost_iostreams.dylib
-        libboost_filesystem.dylib)
+set(EXECUTABLE_OUTPUT_PATH bin/${CMAKE_BUILD_TYPE})
+
+include(FindBoost)
+
+find_package(
+        Boost
+
+        1.36.0
+
+        REQUIRED
+)
+
+link_directories(${Boost_LIBRARY_DIRS})
+
+include_directories(${Boost_INCLUDE_DIRS})
+
+set(SOURCE_FILES
+        main
+        basic
+        analytic
+        heston
+        plot
+        print
+        )
+
+set(LIBRARIES
+        boost_system
+        boost_iostreams
+        boost_filesystem
+        )
 
 add_definitions("-Wall -O3")
 
-ADD_EXECUTABLE(SM_Heston ${SOURCE_FILES})
-TARGET_LINK_LIBRARIES(SM_Heston ${LIBRARIES})
+add_executable(run ${SOURCE_FILES})
+target_link_libraries(run ${LIBRARIES})
