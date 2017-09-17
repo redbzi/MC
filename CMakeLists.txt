@@ -12,7 +12,7 @@ include(FindBoost)
 find_package(
         Boost
 
-        1.36.0
+        1.63.0
 
         REQUIRED
 )
