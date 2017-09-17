@@ -20,4 +20,5 @@ We have also plotted the greeks and the price on a same scale against the spot, 
 
 ## Requirements ##
 - gnuplot-iostream interface http://stahlke.org/dan/gnuplot-iostream/
-- boost > 1.63.0 library http://www.boost.org/
+- boost > 1.63.0 library http://www.boost.org/users/download/
+- cmake > 3.8 https://cmake.org/download/
