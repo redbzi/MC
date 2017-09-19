@@ -1,25 +1,35 @@
-#include "heston.h"
+#include <cmath>
+#include <algorithm>
+#include <vector>
+#include <ctime>
+#include <iostream>
+
+#include "exceptions.h"
+#include "defines.h"
+#include "gbm.h"
+
 
 namespace Heston {
     namespace MC {
         namespace Direct {
             std::vector<double>
-            call_price(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_price(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_price = 0.;
                 double sum_2_price = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S = S_0;
-                    double V = 0.04;
+                    double V = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -38,28 +48,29 @@ namespace Heston {
                 double m = sum_price / (double) M;
                 double v = ((1 / (double) M) * sum_2_price - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_delta(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_delta(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M, double &delta_S) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_delta = 0.;
                 double sum_2_delta = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_m = S_0;
                     double S_h = S_0 + delta_S;
-                    double V = 0.04;
+                    double V = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -83,29 +94,30 @@ namespace Heston {
                 double m = sum_delta / (double) M;
                 double v = ((1 / (double) M) * sum_2_delta - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_gamma(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_gamma(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M, double &delta_S) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_m = S_0;
                     double S_h = S_0 + delta_S;
                     double S_l = S_0 - delta_S;
-                    double V = 0.04;
+                    double V = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -132,30 +144,30 @@ namespace Heston {
                 double m = sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_vega_V_t(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
-                      double &T, int &M, double &delta_sigma) {
-                //sensibility V_t
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+            call_vega_V_t(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                          double &rho,
+                          double &T, int &M, double &delta_sigma) {
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_h = S_0;
                     double S_m = S_0;
-                    double V_h = 0.04;
-                    double V_m = 0.04;
+                    double V_h = V_0;
+                    double V_m = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -180,28 +192,28 @@ namespace Heston {
                 double m = sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
+
             std::vector<double>
-            call_vega_V_0(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
-                        double &T, int &M, double &delta_V_0) {
-                //sensibility V_t
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+            call_vega_V_0(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                          double &rho,
+                          double &T, int &M, double &delta_V_0) {
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_h = S_0;
                     double S_m = S_0;
-                    double V_0 = 0.04;
                     double V_h = V_0 + delta_V_0;
                     double V_m = V_0;
                     for (int j = 0; j < N; ++j) {
@@ -225,32 +237,33 @@ namespace Heston {
                     sum_gamma += (price_h - price_m) / delta_V_0;
                     sum_2_gamma += std::pow((price_h - price_m) / delta_V_0, 2);
                 }
-                double m = 2* sqrt(0.04) * sum_gamma / (double) M;
+                double m = 2 * sqrt(0.04) * sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
+
             std::vector<double>
-            call_vega_theta(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
-                        double &T, int &M, double &delta_theta) {
-                //sensibility theta
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+            call_vega_theta(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                            double &rho,
+                            double &T, int &M, double &delta_theta) {
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_h = S_0;
                     double S_m = S_0;
-                    double V_h = 0.04;
-                    double V_m = 0.04;
+                    double V_h = V_0;
+                    double V_m = V_0;
                     double theta_m = theta;
                     double theta_h = theta + delta_theta;
                     for (int j = 0; j < N; ++j) {
@@ -277,30 +290,31 @@ namespace Heston {
                 double m = sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
         }
         namespace Antithetic {
             std::vector<double>
-            call_price(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_price(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_price = 0.;
                 double sum_2_price = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_1 = S_0;
-                    double V_1 = 0.04;
+                    double V_1 = V_0;
                     double S_2 = S_0;
-                    double V_2 = 0.04;
+                    double V_2 = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -323,31 +337,32 @@ namespace Heston {
                 double m = sum_price / (double) M;
                 double v = ((1 / (double) M) * sum_2_price - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_delta(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_delta(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M, double &delta_S) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_delta = 0.;
                 double sum_2_delta = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_1_m = S_0;
                     double S_1_h = S_0 + delta_S;
-                    double V_1 = 0.04;
+                    double V_1 = V_0;
                     double S_2_m = S_0;
                     double S_2_h = S_0 + delta_S;
-                    double V_2 = 0.04;
+                    double V_2 = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -373,34 +388,36 @@ namespace Heston {
                     double price_2_h = D * std::max(S_2_h - K, 0.);
                     double price_2_m = D * std::max(S_2_m - K, 0.);
                     sum_delta += ((price_1_h - price_1_m) / delta_S + (price_2_h - price_2_m) / delta_S) / 2;
-                    sum_2_delta += std::pow(((price_1_h - price_1_m) / delta_S + (price_2_h - price_2_m) / delta_S) / 2, 2);
+                    sum_2_delta += std::pow(((price_1_h - price_1_m) / delta_S + (price_2_h - price_2_m) / delta_S) / 2,
+                                            2);
                 }
                 double m = sum_delta / (double) M;
                 double v = ((1 / (double) M) * sum_2_delta - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_gamma(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
+            call_gamma(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho,
                        double &T, int &M, double &delta_S) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
 
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_1 = S_0;
-                    double V_1 = 0.04;
+                    double V_1 = V_0;
                     double S_2 = S_0;
-                    double V_2 = 0.04;
+                    double V_2 = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -423,38 +440,41 @@ namespace Heston {
                     double price_2_h = D * std::max(S_2 + delta_S - K, 0.);
                     double price_2_m = D * std::max(S_2 - K, 0.);
                     double price_2_l = D * std::max(S_2 - delta_S - K, 0.);
-                    sum_gamma += ((price_1_h - 2 * price_1_m + price_1_l) / (delta_S * delta_S) + (price_2_h - 2 * price_2_m + price_2_l) / (delta_S * delta_S)) / 2;
-                    sum_2_gamma += std::pow(((price_1_h - 2 * price_1_m + price_1_l) / (delta_S * delta_S) + (price_2_h - 2 * price_2_m + price_2_l) / (delta_S * delta_S)) / 2, 2);
+                    sum_gamma += ((price_1_h - 2 * price_1_m + price_1_l) / (delta_S * delta_S) +
+                                  (price_2_h - 2 * price_2_m + price_2_l) / (delta_S * delta_S)) / 2;
+                    sum_2_gamma += std::pow(((price_1_h - 2 * price_1_m + price_1_l) / (delta_S * delta_S) +
+                                             (price_2_h - 2 * price_2_m + price_2_l) / (delta_S * delta_S)) / 2, 2);
                 }
                 double m = sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
 
             std::vector<double>
-            call_vega_V_t(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho,
-                      double &T, int &M, double &delta_sigma) {
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+            call_vega_V_t(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                          double &rho,
+                          double &T, int &M, double &delta_sigma) {
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
                 std::clock_t t = clock();
                 double sum_gamma = 0.;
                 double sum_2_gamma = 0.;
                 double D = exp(-r * T);
-                int N = 256;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 for (int i = 0; i < M; ++i) {
                     double S_1_h = S_0;
                     double S_1_m = S_0;
-                    double V_1_h = 0.04;
-                    double V_1_m = 0.04;
+                    double V_1_h = V_0;
+                    double V_1_m = V_0;
                     double S_2_h = S_0;
                     double S_2_m = S_0;
-                    double V_2_h = 0.04;
-                    double V_2_m = 0.04;
+                    double V_2_h = V_0;
+                    double V_2_m = V_0;
                     for (int j = 0; j < N; ++j) {
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
@@ -484,30 +504,31 @@ namespace Heston {
                     double price_2_h = D * std::max(S_2_h - K, 0.);
                     double price_2_m = D * std::max(S_2_m - K, 0.);
                     sum_gamma += ((price_1_h - price_1_m) / delta_sigma + (price_2_h - price_2_m) / delta_sigma) / 2;
-                    sum_2_gamma += std::pow(((price_1_h - price_1_m) / delta_sigma + (price_2_h - price_2_m) / delta_sigma) / 2, 2);
+                    sum_2_gamma += std::pow(
+                            ((price_1_h - price_1_m) / delta_sigma + (price_2_h - price_2_m) / delta_sigma) / 2, 2);
                 }
                 double m = sum_gamma / (double) M;
                 double v = ((1 / (double) M) * sum_2_gamma - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration};
                 return res;
             }
         }
         namespace ControlVariate {
             std::vector<double>
-            call_price(double &S_0, double &K, double &r, double &kappa, double &theta, double &sigma, double &rho, double &T, int &M){
-                if (2 * kappa * theta < sigma * sigma) {
-                    std::cout << "Condition to ensure V_t > 0 not satisfied" << std::endl;
-                    std::exit(0);
+            call_price(double &S_0, double &V_0, double &K, double &r, double &kappa, double &theta, double &sigma,
+                       double &rho, double &T, int &M) {
+                if (2 * kappa * theta <= sigma * sigma) {
+                    fellerCondition mcEx;
+                    EXIT(mcEx);
                 }
                 std::clock_t t = clock();
 
                 //pilot simulation
                 double corr = 0.;//correlation between Y and Z, just for information
                 double c = 0.;
-                int p = 1000;
-                int N = 256;
-                double V_0 = 0.04;
+                int p = N_ESTIM_CORREL;
+                int N = N_DAYS_PER_YEAR;
                 double dt = T / (double) N;
                 double D = exp(-r * T);
                 double E_Y = 0.;
@@ -518,12 +539,13 @@ namespace Heston {
                 double sigma_control_T = sqrt((theta - V_0) * (exp(-kappa * T) - 1) / (kappa * T) + theta);
                 double E_Z = GBM::Analytic::call_price(S_0, K, r, sigma_control_T, T);
                 //generate Y and Z samples
-                for (int i(0); i<p; ++i) {
+                for (int i(0); i < p; ++i) {
                     double S_H = S_0;
                     double S_GBM = S_0;
                     double V = V_0;
                     for (int j = 0; j < N; ++j) {
-                        double sigma_control_t = sqrt(exp(-kappa * (j + 1) * dt) * V_0 + theta * (1 - exp(-kappa * (j + 1) * dt)));
+                        double sigma_control_t = sqrt(
+                                exp(-kappa * (j + 1) * dt) * V_0 + theta * (1 - exp(-kappa * (j + 1) * dt)));
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
                         double Z_1 = sqrt(std::abs(2 * log(X_1))) * sin(2 * M_PI * X_2);
@@ -531,22 +553,22 @@ namespace Heston {
                         double dW_v = sqrt(dt) * Z_1;
                         double dW_s = sqrt(dt) * (rho * Z_1 + sqrt(1 - rho * rho) * Z_2);
                         double d_V = kappa * (theta - V) * dt + sigma * sqrt(std::abs(V)) * dW_v;
-                        double d_S_H   = r * S_H   * dt + S_H   * sqrt(std::abs(V)) * dW_s;
-                        double d_S_GBM = r * S_GBM * dt + S_GBM * sigma_control_t     * dW_s;
-                        V     += d_V;
-                        S_H   += d_S_H;
+                        double d_S_H = r * S_H * dt + S_H * sqrt(std::abs(V)) * dW_s;
+                        double d_S_GBM = r * S_GBM * dt + S_GBM * sigma_control_t * dW_s;
+                        V += d_V;
+                        S_H += d_S_H;
                         S_GBM += d_S_GBM;
                     }
-                    V_Y.push_back(D * std::max(S_H   - K, 0.));
+                    V_Y.push_back(D * std::max(S_H - K, 0.));
                     V_Z.push_back(D * std::max(S_GBM - K, 0.));
 
                     E_Y += V_Y[i] / p;
                     E_Y_2 += std::pow(V_Y[i], 2) / p;
                     Var_Z += std::pow((V_Z[i] - E_Z), 2) / p;
                 }
-                for (int i(0); i<p; ++i) {
-                    c    += - (V_Y[i] - E_Y) * (V_Z[i] - E_Z) / (p*Var_Z);
-                    corr += (V_Y[i] - E_Y) * (V_Z[i] - E_Z) / (p*sqrt(Var_Z * (E_Y_2 - std::pow(E_Y, 2))));
+                for (int i(0); i < p; ++i) {
+                    c += -(V_Y[i] - E_Y) * (V_Z[i] - E_Z) / (p * Var_Z);
+                    corr += (V_Y[i] - E_Y) * (V_Z[i] - E_Z) / (p * sqrt(Var_Z * (E_Y_2 - std::pow(E_Y, 2))));
                 }
 
                 double sum_price = 0.;
@@ -556,7 +578,8 @@ namespace Heston {
                     double S_GBM = S_0;
                     double V = V_0;
                     for (int j = 0; j < N; ++j) {
-                        double sigma_control = sqrt(exp(-kappa * (j + 1) * dt) * V_0 + theta * (1 - exp(-kappa * (j + 1) * dt)));
+                        double sigma_control = sqrt(
+                                exp(-kappa * (j + 1) * dt) * V_0 + theta * (1 - exp(-kappa * (j + 1) * dt)));
                         double X_1 = (double) rand() / RAND_MAX;
                         double X_2 = (double) rand() / RAND_MAX;
                         double Z_1 = sqrt(std::abs(2 * log(X_1))) * sin(2 * M_PI * X_2);
@@ -564,22 +587,22 @@ namespace Heston {
                         double dW_v = sqrt(dt) * Z_1;
                         double dW_s = sqrt(dt) * (rho * Z_1 + sqrt(1 - rho * rho) * Z_2);
                         double d_V = kappa * (theta - V) * dt + sigma * sqrt(std::abs(V)) * dW_v;
-                        double d_S_H   = r * S_H   * dt + S_H   * sqrt(std::abs(V)) * dW_s;
-                        double d_S_GBM = r * S_GBM * dt + S_GBM * sigma_control     * dW_s;
-                        V     += d_V;
-                        S_H   += d_S_H;
+                        double d_S_H = r * S_H * dt + S_H * sqrt(std::abs(V)) * dW_s;
+                        double d_S_GBM = r * S_GBM * dt + S_GBM * sigma_control * dW_s;
+                        V += d_V;
+                        S_H += d_S_H;
                         S_GBM += d_S_GBM;
                     }
-                    double Y = D * std::max(S_H   - K, 0.);
+                    double Y = D * std::max(S_H - K, 0.);
                     double Z = D * std::max(S_GBM - K, 0.);
-                    double theta_c = Y + c*(Z - E_Z);
+                    double theta_c = Y + c * (Z - E_Z);
                     sum_price += theta_c;
                     sum_2_price += std::pow(theta_c, 2);
                 }
                 double m = sum_price / (double) M;
                 double v = ((1 / (double) M) * sum_2_price - m * m) / (double) M;
                 double duration = (std::clock() - t) / (double) CLOCKS_PER_SEC;
-                std::vector<double> res = {m, 1.96*sqrt(v / M), duration, corr};
+                std::vector<double> res = {m, NORMAL_SCORE * sqrt(v / M), duration, corr};
                 return res;
             }
         }
