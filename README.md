@@ -26,14 +26,16 @@ We have also plotted the greeks and the price on a same scale against the spot, 
 - cmake > 3.8 https://cmake.org/download/
 
 ## Build and run ##
-1. clone the project: git clone https://github.com/RedwanBouizi/MC-Heston.git
-2. go to MC directory: cd MC
-3. cmake
-4. make
+1. clone the git repository: `git clone https://github.com/RedwanBouizi/MC.git`
+2. go to MC directory: `cd MC`
+3. create a build directory: `mkdir build`
+4. go to build directory: `cd build`
+5. `cmake ../`
+6. `make`
 
 Both a library and an executable will be build. To run the latter, follow these commands:
-1. cd cmake-build-debug/tests/
-2. ./run -1 -2 -3
+1. `cd src`
+2. `./run -1 -2 -3`
 
 Option 1: performs pricing and greeks computation using both the Black-Scholes and Heston models.
 

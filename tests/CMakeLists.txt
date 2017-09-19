@@ -3,8 +3,6 @@ project(MC)
 
 set(CMAKE_CXX_STANDARD 11)
 
-link_directories(../cmake-build-debug/src/)
-
 set(SOURCE
         interface
         plot
