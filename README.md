@@ -44,3 +44,6 @@ Option 2: outputs several graphs telling about the influence of spot, maturity, 
 
 Option 3: shows how the asymmetry (price and greeks) evolves as the correlation between brownian motions in the Heston model increases.
 
+## Outputs ##
+![demo](gifs/delta.gif)
+
