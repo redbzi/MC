@@ -11,13 +11,13 @@ Given some parameters of an european call option, this code computes for {100, 1
 
 Some reduction variance methods have been implemented:
 - Antithetic Variables
-- Control Variate
+- Control Variates
 - Importance Sampling
 
 All of them show great improvements in the estimator accuracy.
 
 
-We have also plotted the greeks and the price on a same scale against the spot, maturity and volatility (only for the Black-Scholes model in the latter).
+We have also plotted the price and greeks on a same scale against the spot, maturity and volatility (only for the Black-Scholes model in the latter).
 
 
 ## Requirements ##
@@ -34,13 +34,13 @@ We have also plotted the greeks and the price on a same scale against the spot, 
 5. `cmake ../`
 6. `make`
 
-Both a library and an executable will be build. To run the latter, follow these commands:
-1. `cd src`
+Both the library and executable should now be built respectively in `/src` and `/tests`. To run the executable, follow these commands:
+1. `cd tests`
 2. `./run -1 -2 -3`
 
-Option 1: performs pricing and greeks computation using both the Black-Scholes and Heston models.
+Option 1: performs pricing and greeks computation using the Black-Scholes and Heston models.
 
 Option 2: outputs several graphs telling about the influence of spot, maturity, volatility over the price and greeks computations.
 
-Option 3: shows how the asymmetry (price and greeks) evolves as the correlation Heston model increases.
+Option 3: shows how the asymmetry (price and greeks) evolves as the correlation between brownian motions in the Heston model increases.
 
