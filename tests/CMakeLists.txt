@@ -15,5 +15,5 @@ set(LIBRARIES
 
 add_definitions("-Wall -O2")
 
-add_executable(run ${SOURCE})
-target_link_libraries(run ${LIBRARIES})
+add_executable(example ${SOURCE})
+target_link_libraries(example ${LIBRARIES})

@@ -370,30 +370,30 @@ void show_both_price(Plot &p_GBM, Plot &p_Heston, double rho) {
     Gnuplot gp;
     gp << boost::format("set xrange [%1%:%2%]\nset yrange [0:110]\n set xlabel 'Spot'\n") % p_GBM.m_X_min % p_GBM.m_X_max;
     gp << "plot" <<
-       gp.file1d(p_GBM.m_pts_price) << "with lines lc rgb \"black\" title 'price'," <<
-       gp.file1d(p_Heston.m_pts_price) << boost::format("with dots lw 5 lc rgb \"red\" title '%1%'") %rho << std::endl;
+       gp.file1d(p_GBM.m_pts_price) << "with lines lc rgb \"black\" title 'price (BS)'," <<
+       gp.file1d(p_Heston.m_pts_price) << boost::format("with dots lw 5 lc rgb \"red\" title 'price (Heston), rho=%1%'") %rho << std::endl;
 }
 
 void show_both_delta(Plot &p_GBM, Plot &p_Heston, double rho){
     Gnuplot gp;
     gp << boost::format("set xrange [%1%:%2%]\nset yrange [0:110]\n set xlabel 'Spot'\n") % p_GBM.m_X_min % p_GBM.m_X_max;
     gp << "plot" <<
-       gp.file1d(p_GBM.m_pts_delta) << "with lines lc rgb \"black\" title 'delta'," <<
-       gp.file1d(p_Heston.m_pts_delta) << boost::format("with dots lw 5 lc rgb \"red\" title '%1%'") %rho << std::endl;
+       gp.file1d(p_GBM.m_pts_delta) << "with lines lc rgb \"black\" title 'delta (BS)'," <<
+       gp.file1d(p_Heston.m_pts_delta) << boost::format("with dots lw 5 lc rgb \"red\" title 'delta (Heston), rho=%1%'") %rho << std::endl;
 }
 
 void show_both_gamma(Plot &p_GBM, Plot &p_Heston, double rho){
     Gnuplot gp;
     gp << boost::format("set xrange [%1%:%2%]\nset yrange [0:130]\n set xlabel 'Spot'\n") % p_GBM.m_X_min % p_GBM.m_X_max;
     gp << "plot" <<
-       gp.file1d(p_GBM.m_pts_gamma) << "with lines lc rgb \"black\" title 'gamma'," <<
-       gp.file1d(p_Heston.m_pts_gamma) << boost::format("with dots lw 5 lc rgb \"red\" title '%1%'") %rho << std::endl;
+       gp.file1d(p_GBM.m_pts_gamma) << "with lines lc rgb \"black\" title 'gamma (BS)'," <<
+       gp.file1d(p_Heston.m_pts_gamma) << boost::format("with dots lw 5 lc rgb \"red\" title 'gamma (Heston), rho=%1%'") %rho << std::endl;
 }
 
 void show_both_vega(Plot &p_GBM, Plot &p_Heston, double rho){
     Gnuplot gp;
     gp << boost::format("set xrange [%1%:%2%]\nset yrange [0:100]\n set xlabel 'Spot'\n") % p_GBM.m_X_min % p_GBM.m_X_max;
     gp << "plot" <<
-       gp.file1d(p_GBM.m_pts_vega)  << "with lines lc rgb \"black\" title 'vega'," <<
-       gp.file1d(p_Heston.m_pts_vega)  << boost::format("with dots lw 5 lc rgb \"red\" title '%1%'") %rho << std::endl;
+       gp.file1d(p_GBM.m_pts_vega)  << "with lines lc rgb \"black\" title 'vega (BS)'," <<
+       gp.file1d(p_Heston.m_pts_vega)  << boost::format("with dots lw 5 lc rgb \"red\" title 'vega (Heston), rho=%1%'") %rho << std::endl;
 }

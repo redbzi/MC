@@ -23,7 +23,7 @@ We have also plotted the price and greeks on a same scale against the spot, matu
 ## Requirements ##
 - gnuplot > 5.2 (tested with qt terminal) http://www.gnuplot.info/download.html
 - gnuplot-iostream interface http://stahlke.org/dan/gnuplot-iostream/
-- boost > 1.63.0 library http://www.boost.org/users/download/
+- boost > 1.63.0 http://www.boost.org/users/download/
 - cmake > 3.8 https://cmake.org/download/
 
 ## Build and run ##
@@ -36,9 +36,9 @@ We have also plotted the price and greeks on a same scale against the spot, matu
 
 Both the library and executable should now be built respectively in `/src` and `/tests`. To run the executable, follow these commands:
 1. `cd tests`
-2. `./run -1 -2 -3`
+2. `./example -1 -2 -3`
 
-Option 1: performs pricing and greeks computation using the Black-Scholes and Heston models.
+Option 1: performs price and greeks computation using the Black-Scholes and Heston models.
 
 Option 2: outputs several graphs telling about the influence of spot, maturity, volatility over the price and greeks computations.
 
