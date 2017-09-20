@@ -13,6 +13,7 @@ Some reduction variance methods have been implemented:
 - Antithetic Variables
 - Control Variate
 - Importance Sampling
+
 All of them show great improvements in the estimator accuracy.
 
 
