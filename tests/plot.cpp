@@ -1,5 +1,6 @@
 #include "plot.h"
 #include "mc.h"
+#include "defines.h"
 
 
 void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, double &r, double &sigma, double &T, int &M, double &d_S){
@@ -12,13 +13,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_price(X, K, r, sigma, T, M)[0]));
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Basic::call_price(X, K, r, sigma,
+                                                                                               T, M)[0]));
                             m_pts_delta.emplace_back(
-                                    std::make_pair(X, 100 * GBM::MC::Basic::call_delta(X, K, r, sigma, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Basic::call_delta(X, K, r, sigma,
+                                                                                               T, M, d_S)[0]));
                             m_pts_gamma.emplace_back(
-                                    std::make_pair(X, 5000 * GBM::MC::Basic::call_gamma(X, K, r, sigma, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Basic::call_gamma(X, K, r, sigma,
+                                                                                               T, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_vega(X, K, r, sigma, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Basic::call_vega(X, K, r, sigma,
+                                                                                             T, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -28,13 +33,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_price(S, K, r, X, T, M)[0]));
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Basic::call_price(S, K, r, X,
+                                                                                               T, M)[0]));
                             m_pts_delta.emplace_back(
-                                    std::make_pair(X, 100 * GBM::MC::Basic::call_delta(S, K, r, X, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Basic::call_delta(S, K, r, X,
+                                                                                               T, M, d_S)[0]));
                             m_pts_gamma.emplace_back(
-                                    std::make_pair(X, 5000 * GBM::MC::Basic::call_gamma(S, K, r, X, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Basic::call_gamma(S, K, r, X,
+                                                                                               T, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_vega(S, K, r, X, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Basic::call_vega(S, K, r, X,
+                                                                                             T, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -44,13 +53,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_price(S, K, r, sigma, X, M)[0]));
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Basic::call_price(S, K, r, sigma,
+                                                                                               X, M)[0]));
                             m_pts_delta.emplace_back(
-                                    std::make_pair(X, 100 * GBM::MC::Basic::call_delta(S, K, r, sigma, X, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Basic::call_delta(S, K, r, sigma,
+                                                                                               X, M, d_S)[0]));
                             m_pts_gamma.emplace_back(
-                                    std::make_pair(X, 5000 * GBM::MC::Basic::call_gamma(S, K, r, sigma, X, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Basic::call_gamma(S, K, r, sigma,
+                                                                                               X, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Basic::call_vega(S, K, r, sigma, X, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Basic::call_vega(S, K, r, sigma,
+                                                                                             X, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -66,15 +79,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_price(X, K, r, sigma, T, M)[0]));
-                            m_pts_delta.emplace_back(std::make_pair(X, 100 *
-                                                                       GBM::MC::Antithetic::call_delta(X, K, r, sigma,
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Antithetic::call_price(X, K, r, sigma,
+                                                                                                    T, M)[0]));
+                            m_pts_delta.emplace_back(
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Antithetic::call_delta(X, K, r, sigma,
                                                                                                        T, M, d_S)[0]));
-                            m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                       GBM::MC::Antithetic::call_gamma(X, K, r, sigma,
+                            m_pts_gamma.emplace_back(
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Antithetic::call_gamma(X, K, r, sigma,
                                                                                                        T, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_vega(X, K, r, sigma, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Antithetic::call_vega(X, K, r, sigma,
+                                                                                                  T, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -84,14 +99,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_price(S, K, r, X, T, M)[0]));
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Antithetic::call_price(S, K, r, X,
+                                                                                                    T, M)[0]));
                             m_pts_delta.emplace_back(
-                                    std::make_pair(X, 100 * GBM::MC::Antithetic::call_delta(S, K, r, X, T, M, d_S)[0]));
-                            m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                       GBM::MC::Antithetic::call_gamma(S, K, r, X, T, M,
-                                                                                                       d_S)[0]));
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Antithetic::call_delta(S, K, r, X,
+                                                                                                    T, M, d_S)[0]));
+                            m_pts_gamma.emplace_back(
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Antithetic::call_gamma(S, K, r, X,
+                                                                                                    T, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_vega(S, K, r, X, T, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Antithetic::call_vega(S, K, r, X,
+                                                                                                  T, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -102,15 +120,17 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                         double X = m_X_min;
                         while (X < m_X_max) {
                             m_pts_price.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_price(S, K, r, sigma, X, M)[0]));
-                            m_pts_delta.emplace_back(std::make_pair(X, 100 *
-                                                                       GBM::MC::Antithetic::call_delta(S, K, r, sigma,
-                                                                                                       X, M, d_S)[0]));
-                            m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                       GBM::MC::Antithetic::call_gamma(S, K, r, sigma,
-                                                                                                       X, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_PRICE * GBM::MC::Antithetic::call_price(S, K, r, sigma,
+                                                                                                    X, M)[0]));
+                            m_pts_delta.emplace_back(
+                                    std::make_pair(X, SCALE_DELTA * GBM::MC::Antithetic::call_delta(S, K, r, sigma,
+                                                                                                    X, M, d_S)[0]));
+                            m_pts_gamma.emplace_back(
+                                    std::make_pair(X, SCALE_GAMMA * GBM::MC::Antithetic::call_gamma(S, K, r, sigma,
+                                                                                                    X, M, d_S)[0]));
                             m_pts_vega.emplace_back(
-                                    std::make_pair(X, GBM::MC::Antithetic::call_vega(S, K, r, sigma, X, M, d_S)[0]));
+                                    std::make_pair(X, SCALE_VEGA * GBM::MC::Antithetic::call_vega(S, K, r, sigma,
+                                                                                                  X, M, d_S)[0]));
 
                             X += (m_X_max - m_X_min) / (double) m_N;
                         }
@@ -131,11 +151,14 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                 case Spot: {
                     double X = m_X_min;
                     while (X < m_X_max) {
-                        m_pts_price.emplace_back(std::make_pair(X, GBM::Analytic::call_price(X, K, r, sigma, T)));
-                        m_pts_delta.emplace_back(std::make_pair(X, 100 * GBM::Analytic::call_delta(X, K, r, sigma, T)));
+                        m_pts_price.emplace_back(
+                                std::make_pair(X, SCALE_PRICE * GBM::Analytic::call_price(X, K, r, sigma, T)));
+                        m_pts_delta.emplace_back(
+                                std::make_pair(X, SCALE_DELTA * GBM::Analytic::call_delta(X, K, r, sigma, T)));
                         m_pts_gamma.emplace_back(
-                                std::make_pair(X, 5000 * GBM::Analytic::call_gamma(X, K, r, sigma, T)));
-                        m_pts_vega.emplace_back(std::make_pair(X, GBM::Analytic::call_vega(X, K, r, sigma, T)));
+                                std::make_pair(X, SCALE_GAMMA * GBM::Analytic::call_gamma(X, K, r, sigma, T)));
+                        m_pts_vega.emplace_back(
+                                std::make_pair(X, SCALE_VEGA * GBM::Analytic::call_vega(X, K, r, sigma, T)));
 
                         X += (m_X_max - m_X_min) / (double) m_N;
                     }
@@ -145,10 +168,14 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                 case Volatility: {
                     double X = m_X_min;
                     while (X < m_X_max) {
-                        m_pts_price.emplace_back(std::make_pair(X, GBM::Analytic::call_price(S, K, r, X, T)));
-                        m_pts_delta.emplace_back(std::make_pair(X, 100 * GBM::Analytic::call_delta(S, K, r, X, T)));
-                        m_pts_gamma.emplace_back(std::make_pair(X, 5000 * GBM::Analytic::call_gamma(S, K, r, X, T)));
-                        m_pts_vega.emplace_back(std::make_pair(X, GBM::Analytic::call_vega(S, K, r, X, T)));
+                        m_pts_price.emplace_back(
+                                std::make_pair(X, SCALE_PRICE * GBM::Analytic::call_price(S, K, r, X, T)));
+                        m_pts_delta.emplace_back(
+                                std::make_pair(X, SCALE_DELTA * GBM::Analytic::call_delta(S, K, r, X, T)));
+                        m_pts_gamma.emplace_back(
+                                std::make_pair(X, SCALE_GAMMA * GBM::Analytic::call_gamma(S, K, r, X, T)));
+                        m_pts_vega.emplace_back(
+                                std::make_pair(X, SCALE_VEGA * GBM::Analytic::call_vega(S, K, r, X, T)));
 
                         X += (m_X_max - m_X_min) / (double) m_N;
                     }
@@ -158,11 +185,14 @@ void Plot_GBM::set_values(SolvingType RES, Method MTD, double &S, double &K, dou
                 case Maturity: {
                     double X = m_X_min;
                     while (X < m_X_max) {
-                        m_pts_price.emplace_back(std::make_pair(X, GBM::Analytic::call_price(S, K, r, sigma, X)));
-                        m_pts_delta.emplace_back(std::make_pair(X, 100 * GBM::Analytic::call_delta(S, K, r, sigma, X)));
+                        m_pts_price.emplace_back(
+                                std::make_pair(X, SCALE_PRICE * GBM::Analytic::call_price(S, K, r, sigma, X)));
+                        m_pts_delta.emplace_back(
+                                std::make_pair(X, SCALE_DELTA * GBM::Analytic::call_delta(S, K, r, sigma, X)));
                         m_pts_gamma.emplace_back(
-                                std::make_pair(X, 5000 * GBM::Analytic::call_gamma(S, K, r, sigma, X)));
-                        m_pts_vega.emplace_back(std::make_pair(X, GBM::Analytic::call_vega(S, K, r, sigma, X)));
+                                std::make_pair(X, SCALE_GAMMA * GBM::Analytic::call_gamma(S, K, r, sigma, X)));
+                        m_pts_vega.emplace_back(
+                                std::make_pair(X, SCALE_VEGA * GBM::Analytic::call_vega(S, K, r, sigma, X)));
 
                         X += (m_X_max - m_X_min) / (double) m_N;
                     }
@@ -197,30 +227,52 @@ void Plot_Heston::set_values(SolvingType RES, Method MTD, double &S, double &V, 
                         case Spot: {
                             double X = m_X_min;
                             while (X < m_X_max) {
-                                m_pts_price.emplace_back(std::make_pair(X, Heston::MC::Direct::call_price(X, V, K, r,
-                                                                                                          kappa,
-                                                                                                          theta, sigma,
-                                                                                                          rho,
-                                                                                                          T, M)[0]));
+                                m_pts_price.emplace_back(
+                                        std::make_pair(X, SCALE_PRICE * Heston::MC::Direct::call_price(X,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       T,
+                                                                                                       M)[0]));
                                 m_pts_delta.emplace_back(
-                                        std::make_pair(X, 100 * Heston::MC::Direct::call_delta(X, V, K, r,
-                                                                                               kappa,
-                                                                                               theta,
-                                                                                               sigma, rho,
-                                                                                               T, M,
-                                                                                               delta_S)[0]));
-                                m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                           Heston::MC::Direct::call_gamma(X, V, K, r,
-                                                                                                          kappa, theta,
-                                                                                                          sigma, rho, T,
-                                                                                                          M,
-                                                                                                          delta_S)[0]));
-                                m_pts_vega.emplace_back(std::make_pair(X,
-                                                                       Heston::MC::Direct::call_vega_V_t(X, V, K, r,
+                                        std::make_pair(X, SCALE_DELTA * Heston::MC::Direct::call_delta(X,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       T,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_gamma.emplace_back(
+                                        std::make_pair(X, SCALE_GAMMA * Heston::MC::Direct::call_gamma(X,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       T,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_vega.emplace_back(
+                                        std::make_pair(X, SCALE_VEGA * Heston::MC::Direct::call_vega_V_t(X,
+                                                                                                         V,
+                                                                                                         K,
+                                                                                                         r,
                                                                                                          kappa,
-                                                                                                         theta, sigma,
+                                                                                                         theta,
+                                                                                                         sigma,
                                                                                                          rho,
-                                                                                                         T, M,
+                                                                                                         T,
+                                                                                                         M,
                                                                                                          delta_sigma)[0]));
 
                                 X += (m_X_max - m_X_min) / (double) m_N;
@@ -232,31 +284,52 @@ void Plot_Heston::set_values(SolvingType RES, Method MTD, double &S, double &V, 
                         case Maturity: {
                             double X = m_X_min;
                             while (X < m_X_max) {
-                                m_pts_price.emplace_back(std::make_pair(X,
-                                                                        Heston::MC::Direct::call_price(S, V, K, r,
+                                m_pts_price.emplace_back(
+                                        std::make_pair(X, SCALE_PRICE * Heston::MC::Direct::call_price(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
                                                                                                        kappa,
-                                                                                                       theta, sigma,
+                                                                                                       theta,
+                                                                                                       sigma,
                                                                                                        rho,
-                                                                                                       X, M)[0]));
+                                                                                                       X,
+                                                                                                       M)[0]));
                                 m_pts_delta.emplace_back(
-                                        std::make_pair(X, 100 * Heston::MC::Direct::call_delta(S, V, K, r,
-                                                                                               kappa,
-                                                                                               theta,
-                                                                                               sigma, rho,
-                                                                                               X, M,
-                                                                                               delta_S)[0]));
-                                m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                           Heston::MC::Direct::call_gamma(S, V, K, r,
-                                                                                                          kappa, theta,
-                                                                                                          sigma, rho, X,
-                                                                                                          M,
-                                                                                                          delta_S)[0]));
-                                m_pts_vega.emplace_back(std::make_pair(X,
-                                                                       Heston::MC::Direct::call_vega_V_t(S, V, K, r,
+                                        std::make_pair(X, SCALE_DELTA * Heston::MC::Direct::call_delta(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       X,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_gamma.emplace_back(
+                                        std::make_pair(X, SCALE_GAMMA * Heston::MC::Direct::call_gamma(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       X,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_vega.emplace_back(
+                                        std::make_pair(X, SCALE_VEGA * Heston::MC::Direct::call_vega_V_t(S,
+                                                                                                         V,
+                                                                                                         K,
+                                                                                                         r,
                                                                                                          kappa,
-                                                                                                         theta, sigma,
+                                                                                                         theta,
+                                                                                                         sigma,
                                                                                                          rho,
-                                                                                                         X, M,
+                                                                                                         X,
+                                                                                                         M,
                                                                                                          delta_sigma)[0]));
 
                                 X += (m_X_max - m_X_min) / (double) m_N;
@@ -273,35 +346,52 @@ void Plot_Heston::set_values(SolvingType RES, Method MTD, double &S, double &V, 
                             double X = m_X_min;
                             while (X < m_X_max) {
                                 m_pts_price.emplace_back(
-                                        std::make_pair(X, Heston::MC::Antithetic::call_price(X, V, K, r,
-                                                                                             kappa, theta,
-                                                                                             sigma, rho,
-                                                                                             T, M)[0]));
-                                m_pts_delta.emplace_back(std::make_pair(X, 100 *
-                                                                           Heston::MC::Antithetic::call_delta(X, V, K,
-                                                                                                              r,
-                                                                                                              kappa,
-                                                                                                              theta,
-                                                                                                              sigma,
-                                                                                                              rho,
-                                                                                                              T, M,
-                                                                                                              delta_S)[0]));
-                                m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                           Heston::MC::Antithetic::call_gamma(X, V, K,
-                                                                                                              r,
-                                                                                                              kappa,
-                                                                                                              theta,
-                                                                                                              sigma,
-                                                                                                              rho,
-                                                                                                              T, M,
-                                                                                                              delta_S)[0]));
+                                        std::make_pair(X, SCALE_PRICE * Heston::MC::Antithetic::call_price(X,
+                                                                                                           V,
+                                                                                                           K,
+                                                                                                           r,
+                                                                                                           kappa,
+                                                                                                           theta,
+                                                                                                           sigma,
+                                                                                                           rho,
+                                                                                                           T,
+                                                                                                           M)[0]));
+                                m_pts_delta.emplace_back(
+                                        std::make_pair(X, SCALE_DELTA * Heston::MC::Antithetic::call_delta(X,
+                                                                                                           V,
+                                                                                                           K,
+                                                                                                           r,
+                                                                                                           kappa,
+                                                                                                           theta,
+                                                                                                           sigma,
+                                                                                                           rho,
+                                                                                                           T,
+                                                                                                           M,
+                                                                                                           delta_S)[0]));
+                                m_pts_gamma.emplace_back(
+                                        std::make_pair(X, SCALE_GAMMA * Heston::MC::Antithetic::call_gamma(X,
+                                                                                                           V,
+                                                                                                           K,
+                                                                                                           r,
+                                                                                                           kappa,
+                                                                                                           theta,
+                                                                                                           sigma,
+                                                                                                           rho,
+                                                                                                           T,
+                                                                                                           M,
+                                                                                                           delta_S)[0]));
                                 m_pts_vega.emplace_back(
-                                        std::make_pair(X, Heston::MC::Antithetic::call_vega_V_t(X, V, K, r,
-                                                                                                kappa,
-                                                                                                theta,
-                                                                                                sigma, rho,
-                                                                                                T, M,
-                                                                                                delta_sigma)[0]));
+                                        std::make_pair(X, SCALE_VEGA * Heston::MC::Antithetic::call_vega_V_t(X,
+                                                                                                             V,
+                                                                                                             K,
+                                                                                                             r,
+                                                                                                             kappa,
+                                                                                                             theta,
+                                                                                                             sigma,
+                                                                                                             rho,
+                                                                                                             T,
+                                                                                                             M,
+                                                                                                             delta_sigma)[0]));
 
                                 X += (m_X_max - m_X_min) / (double) m_N;
                             }
@@ -311,31 +401,52 @@ void Plot_Heston::set_values(SolvingType RES, Method MTD, double &S, double &V, 
                         case Maturity: {
                             double X = m_X_min;
                             while (X < m_X_max) {
-                                m_pts_price.emplace_back(std::make_pair(X,
-                                                                        Heston::MC::Direct::call_price(S, V, K, r,
+                                m_pts_price.emplace_back(
+                                        std::make_pair(X, SCALE_PRICE * Heston::MC::Direct::call_price(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
                                                                                                        kappa,
-                                                                                                       theta, sigma,
+                                                                                                       theta,
+                                                                                                       sigma,
                                                                                                        rho,
-                                                                                                       X, M)[0]));
+                                                                                                       X,
+                                                                                                       M)[0]));
                                 m_pts_delta.emplace_back(
-                                        std::make_pair(X, 100 * Heston::MC::Direct::call_delta(S, V, K, r,
-                                                                                               kappa,
-                                                                                               theta,
-                                                                                               sigma, rho,
-                                                                                               X, M,
-                                                                                               delta_S)[0]));
-                                m_pts_gamma.emplace_back(std::make_pair(X, 5000 *
-                                                                           Heston::MC::Direct::call_gamma(S, V, K, r,
-                                                                                                          kappa, theta,
-                                                                                                          sigma, rho, X,
-                                                                                                          M,
-                                                                                                          delta_S)[0]));
-                                m_pts_vega.emplace_back(std::make_pair(X,
-                                                                       Heston::MC::Direct::call_vega_V_t(S, V, K, r,
+                                        std::make_pair(X, SCALE_DELTA * Heston::MC::Direct::call_delta(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       X,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_gamma.emplace_back(
+                                        std::make_pair(X, SCALE_GAMMA * Heston::MC::Direct::call_gamma(S,
+                                                                                                       V,
+                                                                                                       K,
+                                                                                                       r,
+                                                                                                       kappa,
+                                                                                                       theta,
+                                                                                                       sigma,
+                                                                                                       rho,
+                                                                                                       X,
+                                                                                                       M,
+                                                                                                       delta_S)[0]));
+                                m_pts_vega.emplace_back(
+                                        std::make_pair(X, SCALE_VEGA * Heston::MC::Direct::call_vega_V_t(S,
+                                                                                                         V,
+                                                                                                         K,
+                                                                                                         r,
                                                                                                          kappa,
-                                                                                                         theta, sigma,
+                                                                                                         theta,
+                                                                                                         sigma,
                                                                                                          rho,
-                                                                                                         X, M,
+                                                                                                         X,
+                                                                                                         M,
                                                                                                          delta_sigma)[0]));
 
                                 X += (m_X_max - m_X_min) / (double) m_N;
