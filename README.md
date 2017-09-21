@@ -1,6 +1,5 @@
 # MC
 
-
 ## Description ##
 In this project we have implemented some Monte-Carlo simulations around the Black-Scholes and Heston models.
 Given some parameters of an european call option, this code computes for {100, 10000, 100000} simulations the following quantities:
@@ -44,7 +43,8 @@ Option 2: outputs several graphs telling about the influence of spot, maturity, 
 
 Option 3: shows how the asymmetry (price and greeks) evolves as the correlation between brownian motions in the Heston model increases.
 
-## Outputs ##
+The latter is quite long, which is why we have included the outputs below.
+
 ![demo](gifs/price.gif)
 
 ![demo](gifs/delta.gif)
