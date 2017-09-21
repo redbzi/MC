@@ -43,3 +43,13 @@ Option 1: performs price and greeks computation using the Black-Scholes and Hest
 Option 2: outputs several graphs telling about the influence of spot, maturity, volatility over the price and greeks computations.
 
 Option 3: shows how the asymmetry (price and greeks) evolves as the correlation between brownian motions in the Heston model increases.
+
+## Outputs ##
+![demo](gifs/price.gif)
+
+![demo](gifs/delta.gif)
+
+![demo](gifs/gamma.gif)
+
+![demo](gifs/vega.gif)
+
