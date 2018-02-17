@@ -5,7 +5,7 @@
 #include <iostream>
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
-#include "gnuplot-iostream/gnuplot-iostream.h"
+#include "gnuplot-iostream.h"
 
 
 enum SolvingType{

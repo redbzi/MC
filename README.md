@@ -52,4 +52,3 @@ The latter is quite long, which is why we have included the outputs below.
 ![demo](gifs/gamma.gif)
 
 ![demo](gifs/vega.gif)
-
